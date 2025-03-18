@@ -1,0 +1,158 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-17 12:14+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != "
+"11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % "
+"100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || "
+"(n % 100 >=11 && n % 100 <=14 )) ? 2: 3);\n"
+#: main/templates/main/base.html:7
+msgid "My Website"
+msgstr "Мій сайт"
+
+#: main/templates/main/base.html:22 main/templates/main/base.html:45
+msgid "Home page"
+msgstr "Головна сторінка"
+
+#: main/templates/main/base.html:25 main/templates/main/base.html:46
+msgid "About us"
+msgstr "Про нас"
+
+#: main/templates/main/base.html:28 main/templates/main/base.html:47
+msgid "Contact"
+msgstr "Контакти"
+
+#: main/templates/main/base.html:31 main/templates/main/base.html:48
+msgid "Services"
+msgstr "Послуги"
+
+msgid "Seed Drills Retrofit for Fertilizer Application"
+msgstr "Переобладнання сівалок для внесення добрив"
+
+msgid "We provide retrofitting services for seed drills to enable the application of nitrogen fertilizers (CAS) directly during planting. Our solutions increase the efficiency and productivity of agricultural equipment."
+msgstr "Ми надаємо послуги з переобладнання сівалок для можливості внесення азотних добрив (КАС) безпосередньо під час посіву. Наші рішення підвищують ефективність та продуктивність сільськогосподарської техніки."
+
+msgid "Custom Machinery Modifications"
+msgstr "Індивідуальні модифікації техніки"
+
+msgid "We offer customized machinery modifications to optimize the performance of your equipment, adapting it to the specific needs of your agricultural operations."
+msgstr "Ми пропонуємо індивідуальні модифікації техніки для оптимізації роботи вашого обладнання, адаптуючи його до специфічних потреб вашого агробізнесу."
+
+msgid "Installation of Fertilizer Equipment"
+msgstr "Встановлення обладнання для внесення добрив"
+
+msgid "We install state-of-the-art fertilizer application systems, ensuring accurate and efficient application of liquid and granular fertilizers to improve crop yield."
+msgstr "Ми встановлюємо сучасні системи для внесення добрив, що забезпечують точне та ефективне внесення рідких і гранульованих добрив для підвищення врожайності."
+
+msgid "Machine Overhaul and Repair"
+msgstr "Капітальний ремонт та обслуговування техніки"
+
+msgid "We specialize in the overhaul and repair of seed drills and other agricultural machinery, restoring them to peak performance."
+msgstr "Ми спеціалізуємось на капітальному ремонті та обслуговуванні сівалок та іншої сільськогосподарської техніки, забезпечуючи їх максимальну продуктивність."
+
+msgid "Consulting on Agricultural Machinery"
+msgstr "Консультування з питань сільськогосподарської техніки"
+
+msgid "We offer expert consulting on selecting, operating, and maintaining agricultural machinery for optimal performance and cost-efficiency."
+msgstr "Ми надаємо професійні консультації з вибору, експлуатації та обслуговування сільськогосподарської техніки для досягнення оптимальних результатів та економії витрат."
+
+msgid "PrJSC \"BOHUSLAVSKA SILHOSPTEKNIKA\" is the largest in Ukraine manufacturer of sprayers for agriculture and equipment for application of liquid fertilizer."
+msgstr "ПрАТ \"БОГУСЛАВСЬКА СІЛЬГОСПТЕХНІКА\" — найбільший виробник обприскувачів для сільського господарства та обладнання для внесення рідких мінеральних добрив в Україні."
+
+msgid "The range of our products for plant protection includes:"
+msgstr "Асортимент нашої продукції для захисту рослин включає:"
+
+msgid "trailed sprayers ODYSSEY, KRONOS, TITAN and ATLANT of 18m, 22m, 24m, 28m, 32m and 36m working width with capacity of 2000, 2500, 3000, 4000 liters plastic tanks"
+msgstr "причіпні обприскувачі ODYSSEY, KRONOS, TITAN та ATLANT з робочою шириною 18м, 22м, 24м, 28м, 32м та 36м, з ємністю пластикових баків 2000, 2500, 3000, 4000 літрів"
+
+msgid "The range of our products for application of liquid fertilizer includes:"
+msgstr "Асортимент нашої продукції для внесення рідких мінеральних добрив включає:"
+
+msgid "injection applicators LFM -3000-8.4 and LFM -5000-12;"
+msgstr "аплікатори з ін'єкційними робочими органами LFM -3000-8.4 та LFM -5000-12;"
+
+msgid "trailed plant-feeder for fertilizing PP-5000-01, PP-5000-02 and PP- 10 000-01"
+msgstr "причіпні підживлювачі для внесення добрив PP-5000-01, PP-5000-02 та PP-10000-01"
+
+msgid "complete set of equipment for fertilizer applicator EKO-600-5.6 (for KRN-5.6m)"
+msgstr "комплект обладнання для підживлювача ЕКО-600-5.6 (для КРН-5.6м)"
+
+msgid "We also perform the work on the re-equipment of cultivators for injection of UAN (Nitrogen solutions) and of ammonia water."
+msgstr "Ми також виконуємо роботи з переобладнання культиваторів для внесення карбамідно-амміачної суміші (КАС) та аміачної води."
+
+msgid "Experienced staff, advanced technology, many years of experience and attention we give to feedback from our customers ensures reliability of our products. More than 5,000 trailed sprayers are operated for plant protection in Ukraine, Kazakhstan, Moldova, Russia, Romania, Lithuania, Bulgaria, Poland and Hungary."
+msgstr "Кваліфікований персонал, передові технології, багаторічний досвід та увага до відгуків наших клієнтів забезпечують надійність нашої продукції. Більше 5000 причіпних обприскувачів працюють для захисту рослин в Україні, Казахстані, Молдові, Росії, Румунії, Литві, Болгарії, Польщі та Угорщині."
+
+msgid "Our machinery will protect your crop!"
+msgstr "Наша техніка захистить ваш врожай!"
+
+msgid "Contact address: Ukraine, Kyiv, Pryrodna Street, 1"
+msgstr "Адреса для зв'язку: Україна, м. Київ, вул. Природна, 1"
+
+msgid "Email: abv@boguslav.ua"
+msgstr "Email: abv@boguslav.ua"
+
+msgid "Phone: +380 (44) 123-45-67"
+msgstr "Телефон: +380 (44) 123-45-67"
+
+msgid "We are also on social media!"
+msgstr "Ми також у соціальних мережах!"
+
+msgid "Working hours: Mon-Fri 08:00 - 16:30"
+msgstr "Робочі години: Пн-Пт 08:00 - 16:30"
+
+msgid "Contact Information"
+msgstr "Контактна інформація"
+
+msgid "Our Services"
+msgstr "Наші послуги"
+
+msgid "Last updated:"
+msgstr "Останнє оновлення:"
+
+msgid "Search"
+msgstr "Пошук"
+
+msgid "Total"
+msgstr "Всього"
+
+msgid "service"
+msgid_plural "services"
+msgstr[0] "послуга"
+msgstr[1] "послуги"
+msgstr[2] "послуг"
+
+msgid "Contacts available:"
+msgstr "Контакти доступні:"
+
+msgid "No services available"
+msgstr "Послуг немає"
+
+msgid "Yes,No"
+msgstr "Так,Ні"
+
+msgid "Search services..."
+msgstr "Шукати послуги..."
+
+msgid "Show all services"
+msgstr "Показати всі сервіси"
+
+msgid "Collapse"
+msgstr "Згорнути"
+
+msgid "Show all text"
+msgstr "Показати весь текст"

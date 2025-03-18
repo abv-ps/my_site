@@ -1,0 +1,34 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="text-center">
+            <h1>{{ about_title }}</h1>
+        </div>
+        <p>{{ company_description }}</p>
+
+        <section>
+            <h3>{{ product_line_title }}</h3>
+            <p>{{ trailed_sprayers_series }}</p>
+        </section>
+
+        <section>
+            <h3>{{ liquid_fertilizer_title }}</h3>
+            <ul>
+                <li>{{ injection_applicators }}</li>
+                <li>{{ fertilizer_applicators }}</li>
+                <li>{{ complete_set_for_applicator }}</li>
+            </ul>
+        </section>
+
+        <section>
+            <h3>{{ additional_services }}</h3>
+            <p>{{ expertise_description }}</p>
+        </section>
+
+        <section class="text-center mt-5">
+            <h1 class="display-4 font-weight-bold">{{ slogan_title }}</h1>
+            <p class="font-italic"><strong>{{ slogan }}</strong></p>
+        </section>
+    </div>
+{% endblock %}

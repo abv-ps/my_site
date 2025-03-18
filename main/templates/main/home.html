@@ -1,0 +1,17 @@
+{% extends 'main/base.html' %}
+
+{% block title %}{{ services.0.title }}{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1>{{ services.0.title }}</h1>
+        <p>{{ services.0.description }}</p>
+
+        {% for service in services|slice:"1:" %}
+            <section>
+                <h2>{{ service.title }}</h2>
+                <p>{{ service.description }}</p>
+            </section>
+        {% endfor %}
+    </div>
+{% endblock %}

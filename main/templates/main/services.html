@@ -1,0 +1,86 @@
+{% extends 'main/base.html' %}
+{% load i18n %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1 class="text-center">{{ services_title|upper }}</h1>
+        <p class="text-muted text-center">{{ last_updated_view }} {{ last_updated|date:"F d, Y" }}</p>
+
+        <form method="GET" action="" class="mb-3">
+            <label>
+                <input type="text" name="q" class="form-control" placeholder="🔍 {{ search_placeholder }}"
+                       value="{{ request.GET.q }}">
+            </label>
+            <button type="submit" class="btn btn-primary mt-2">{{ search_view }}</button>
+        </form>
+
+        <p>
+            <strong>
+                {{ total_services_view }} {{ services|length }} {{ service_view }}
+
+            </strong>
+        </p>
+
+        <ul class="list-group">
+            {% for service in services %}
+                <li class="list-group-item">
+                    <h3>{{ service.title|title }}</h3>
+
+                    <!-- Скорочений текст (видимий за замовчуванням) -->
+                    <p id="short-text-{{ forloop.counter }}">
+                        {{ service.description|truncatechars:150|safe }}
+                    </p>
+
+                    <!-- Повний текст (прихований за замовчуванням) -->
+                    <div class="collapse" id="full-text-{{ forloop.counter }}">
+                        <p>{{ service.description|safe }}</p>
+                    </div>
+
+                    {% if service.description|length > 150 %}
+                        <!-- Кнопка "Розгорнути" -->
+                        <button class="btn btn-link collapsed"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#full-text-{{ forloop.counter }}"
+                                aria-expanded="false"
+                                aria-controls="full-text-{{ forloop.counter }}"
+                                onclick="document.getElementById('short-text-{{ forloop.counter }}').classList.add('d-none'); this.classList.add('d-none'); this.nextElementSibling.classList.remove('d-none');">
+                            {{ show_all_text }}
+                        </button>
+
+                        <!-- Кнопка "Згорнути" (спочатку прихована) -->
+                        <button class="btn btn-link d-none"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#full-text-{{ forloop.counter }}"
+                                aria-expanded="true"
+                                aria-controls="full-text-{{ forloop.counter }}"
+                                onclick="document.getElementById('short-text-{{ forloop.counter }}').classList.remove('d-none'); this.classList.add('d-none'); this.previousElementSibling.classList.remove('d-none');">
+                            {{ show_not_all }}
+                        </button>
+                    {% endif %}
+                </li>
+            {% empty %}
+                <li class="list-group-item text-muted">{{ no_services_view }}</li>
+            {% endfor %}
+
+        </ul>
+
+        {% if services|length < filtered_services|length %}
+            <div class="text-center mt-3">
+                <a href="?show_all=true&q={{ request.GET.q }}" class="btn btn-link"
+                   style="color: yellow;">{{ show_all }}</a>
+            </div>
+        {% endif %}
+
+        {% if show_all and services|length >= filtered_services|length %}
+            <div class="text-center mt-3">
+                <a href="?show_all=false&q={{ request.GET.q }}" class="btn btn-link"
+                   style="color: darkblue;">{{ show_not_all }}</a>
+            </div>
+        {% endif %}
+
+
+    </div>
+{% endblock %}
+{% block footer_additional_content %}
+    <p>{{ contacts_availability_view }} {{ has_contacts|yesno:yes_no_view }}</p>
+{% endblock %}
