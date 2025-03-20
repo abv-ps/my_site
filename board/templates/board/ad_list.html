@@ -1,0 +1,13 @@
+{% extends "board/base.html" %}
+{% block content %}
+  <h2>Оголошення</h2>
+  <ul>
+    {% for ad in ads %}
+      <li>
+        <a href="{% url 'board:ad_detail' ad.id %}">{{ ad.title }}</a> - {{ ad.price }} грн
+      </li>
+    {% empty %}
+      <p>Наразі немає активних оголошень.</p>
+    {% endfor %}
+  </ul>
+{% endblock %}

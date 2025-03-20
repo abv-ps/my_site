@@ -1,0 +1,26 @@
+{% extends "board/base.html" %}
+
+{% block title %}Реєстрація{% endblock %}
+
+{% block content %}
+<h2>Реєстрація</h2>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="username" class="form-label">Логін</label>
+        <input type="text" name="username" id="username" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label for="password1" class="form-label">Пароль</label>
+        <input type="password" name="password1" id="password1" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label for="password2" class="form-label">Повторіть пароль</label>
+        <input type="password" name="password2" id="password2" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Зареєструватися</button>
+</form>
+
+<p>Вже є акаунт? <a href="{% url 'board:login' %}">Увійти</a></p>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "board/base.html" %}
+{% block content %}
+  <h2>Профіль користувача {{ user.username }}</h2>
+  <p>Email: {{ user.email }}</p>
+  <p>Телефон: {{ profile.phone_number|default:"Не вказано" }}</p>
+  <p>Адреса: {{ profile.address|default:"Не вказано" }}</p>
+
+  <h3>Мої оголошення</h3>
+  <ul>
+    {% for ad in user.ad_set.all %}
+      <li>
+        <a href="{% url 'board:ad_detail' ad.id %}">{{ ad.title }}</a> ({{ ad.price }} грн)
+      </li>
+    {% empty %}
+      <p>Немає активних оголошень</p>
+    {% endfor %}
+  </ul>
+{% endblock %}

@@ -17,9 +17,17 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.i18n import i18n_patterns
+from board.admin import admin_site
 
 urlpatterns = i18n_patterns(
-    path('admin/', admin.site.urls),
-    path('', include('main.urls')),
+    path('admin/', admin_site.urls),
+    #path('admin/', admin.site.urls),
+    path('home', include('main.urls')),
+
     path('i18n/', include('django.conf.urls.i18n')),
 )
+
+urlpatterns += [
+    path('', include('board.urls')),
+    path('board/', include('board.urls')),
+]

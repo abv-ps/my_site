@@ -1,0 +1,23 @@
+{% extends "board/base.html" %}
+{% block content %}
+    <h2>Статистика</h2>
+
+    <p>Оголошень створено за останній місяць: <strong>{{ ads_last_month }}</strong></p>
+    <p>Активних оголошень: <strong>{{ active_ads }}</strong></p>
+    <p>Неактивних оголошень: <strong>{{ inactive_ads }}</strong></p>
+    <p>Загальна кількість коментарів: <strong>{{ comments_count }}</strong></p>
+
+    <h3>Оголошення за категоріями</h3>
+    <table border="1">
+        <tr>
+            <th>Категорія</th>
+            <th>Кількість оголошень</th>
+        </tr>
+        {% for category in category_stats %}
+            <tr>
+                <td>{{ category.name }}</td>
+                <td>{{ category.num_ads }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
