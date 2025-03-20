@@ -1,0 +1,11 @@
+{% extends "admin/index.html" %}
+
+{% block content %}
+    <div class="module">
+        <h2>Корисні посилання</h2>
+        <ul>
+            <li><a href="{{ custom_statistics_link }}">📊 Переглянути статистику</a></li>
+        </ul>
+    </div>
+    {{ block.super }}
+{% endblock %}

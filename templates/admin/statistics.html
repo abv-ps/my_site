@@ -1,0 +1,28 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+    <h1>📊 Статистика оголошень</h1>
+
+    <ul>
+        <li><strong>Оголошень за останній місяць:</strong> {{ ads_last_month }}</li>
+        <li><strong>Активних оголошень:</strong> {{ active_ads }}</li>
+        <li><strong>Неактивних оголошень:</strong> {{ inactive_ads }}</li>
+        <li><strong>Кількість коментарів:</strong> {{ comments_count }}</li>
+    </ul>
+
+    <h2>Статистика по категоріях</h2>
+    <table border="1">
+        <tr>
+            <th>Категорія</th>
+            <th>Кількість оголошень</th>
+        </tr>
+        {% for category in category_stats %}
+        <tr>
+            <td>{{ category.name }}</td>
+            <td>{{ category.num_ads }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <p><a href="{% url 'admin:index' %}">⬅️ Повернутись в адмінку</a></p>
+{% endblock %}

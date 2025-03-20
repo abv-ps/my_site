@@ -1,0 +1,22 @@
+{% extends "board/base.html" %}
+
+{% block title %}Вхід{% endblock %}
+
+{% block content %}
+<h2>Увійти</h2>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="username" class="form-label">Логін</label>
+        <input type="text" name="username" id="username" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label for="password" class="form-label">Пароль</label>
+        <input type="password" name="password" id="password" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Увійти</button>
+</form>
+
+<p>Ще немає акаунту? <a href="{% url 'board:register' %}">Зареєструйтесь</a></p>
+{% endblock %}

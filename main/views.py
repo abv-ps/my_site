@@ -26,7 +26,7 @@ def home_view(request: HttpRequest) -> HttpResponse:
 
 def about_view(request: HttpRequest) -> HttpResponse:
     """
-    Renders the 'About Us' page with the company information.
+    Renders the 'About Us' page with company information.
 
     Parameters:
         request (HttpRequest): The request object from the user.
@@ -90,6 +90,13 @@ def about_view(request: HttpRequest) -> HttpResponse:
 
 
 class ContactView(View):
+    """
+    Renders the 'Contact Us' page containing contact information.
+
+    This view is responsible for displaying the contact details, including the address,
+    email, phone number, social media links, and working hours.
+    """
+
     contact_title = _("Contact Information")
     address = _("Contact address: Ukraine, Kyiv, Pryrodna Street, 1")
     email = _("Email: abv@boguslav.ua")
@@ -99,13 +106,13 @@ class ContactView(View):
 
     def get(self, request: HttpRequest) -> HttpResponse:
         """
-        Renders the "Contact Us" page.
+        Renders the 'Contact Us' page.
 
         Parameters:
             request (HttpRequest): The request object from the user.
 
         Returns:
-            HttpResponse: The response containing the rendered "Contact Us" page template.
+            HttpResponse: The response containing the rendered 'Contact Us' page template.
         """
         return render(request,
                       'main/contact.html', {
@@ -121,6 +128,13 @@ class ContactView(View):
 
 
 class ServiceView(View):
+    """
+    Renders the 'Our Services' page containing a list of services provided by the company.
+
+    This view handles the display of various services offered, with options for searching
+    and filtering the services based on user input.
+    """
+
     services_title = _("Our Services")
     last_updated = datetime.now()
     last_updated_view = _("Last updated:")
@@ -174,6 +188,15 @@ class ServiceView(View):
     ]
 
     def get(self, request: HttpRequest) -> HttpResponse:
+        """
+        Renders the 'Our Services' page with filtered services based on user input.
+
+        Parameters:
+            request (HttpRequest): The request object from the user.
+
+        Returns:
+            HttpResponse: The response containing the rendered 'Our Services' page template.
+        """
         query = request.GET.get("q", "").strip().lower()
         filtered_services = [
             s for s in self.SERVICES if query in s["title"].lower()
@@ -208,10 +231,19 @@ class ServiceView(View):
         return render(request, "main/services.html", context)
 
 
-def services_view(request):
+def services_view(request: HttpRequest) -> HttpResponse:
+    """
+    Renders the list of services, with options to show all or a limited set.
+
+    Parameters:
+        request (HttpRequest): The request object from the user.
+
+    Returns:
+        HttpResponse: The response containing the rendered services page.
+    """
     show_all = request.GET.get('show_all') == 'true'
     if show_all:
-        services = ServiceView.objects.all()
+        services = ServiceView.SERVICES
     else:
-        services = ServiceView.objects.all()[:3]
+        services = ServiceView.SERVICES[:3]
     return render(request, 'main/services.html', {'services': services})
