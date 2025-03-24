@@ -103,14 +103,33 @@
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
             <li class="nav-item"><a class="nav-link" href="{% url 'board:ad_list' %}">{% trans "Оголошення" %}</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'board:ad_statistics' %}">{% trans "Статистика" %}</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'board:ad_statistics' %}">{% trans "Статистика" %}</a>
+            </li>
             <li class="nav-item"><a class="nav-link" href="{% url 'board:login' %}">{% trans "Увійти" %}</a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'board:register' %}">{% trans "Реєстрація" %}</a></li>
         </ul>
 
-
+        <ul class="navbar-nav ml-auto">
+            {% if user.is_authenticated %}
+                <li class="nav-item">
+                    {% if user.profile.avatar %}
+                        <img src="{{ user.profile.avatar.url }}" alt="Avatar" class="img-fluid"
+                             style="height: 40px; width: 40px; border-radius: 50%;">
+                    {% else %}
+                        <img src="{% static 'images/default_avatar.png' %}" alt="Default Avatar"
+                             class="img-fluid" style="height: 40px; width: 40px; border-radius: 50%;">
+                    {% endif %}
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <img src="{% static 'images/default_avatar.png' %}" alt="Default Avatar" class="img-fluid"
+                         style="height: 40px; width: 40px; border-radius: 50%;">
+                </li>
+            {% endif %}
+        </ul>
     </div>
 </nav>
+
 
 <div class="content container mt-4">
     {% block content %}{% endblock %}

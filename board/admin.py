@@ -151,8 +151,8 @@ class ProfileAdmin(admin.ModelAdmin):
     Methods:
         None
     """
-    list_display = ('user', 'phone_number', 'address', 'email', 'is_active', 'is_staff')
-    search_fields = ('user', 'email', 'phone_number')
+    list_display = ('user', 'bio', 'birth_date', 'phone_number', 'location', 'email', 'is_active', 'is_staff')
+    search_fields = ('user', 'email', 'phone_number', 'bio', 'location')
 
 
 @admin.register(Category, site=admin_site)

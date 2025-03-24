@@ -32,34 +32,43 @@ class Profile(models.Model):
     A model representing a user profile.
 
     This model is associated with the `User` model and contains additional
-    information such as phone number, address, email, and user status
-    (active or staff).
+    information about a user such as phone number, address, email, bio,
+    birth date, and user status (whether the user is active or a staff member).
 
     Attributes:
-        user (OneToOneField): The related `User` instance.
-        phone_number (CharField): The user's phone number (optional).
-        address (CharField): The user's address (optional).
-        email (EmailField): The user's email (optional).
-        is_active (BooleanField): Whether the user is active.
-        is_staff (BooleanField): Whether the user is a staff member.
+    user (OneToOneField): A one-to-one relationship with the `User` model,
+                           representing the associated user.
+    bio (TextField): A short biography or description of the user (optional).
+    phone_number (CharField): The user's phone number (optional).
+    birth_date (DateField): The user's birth date (optional).
+    location (CharField): The user's address or location (optional).
+    email (EmailField): The user's email address (optional).
+    is_active (BooleanField): Whether the user's profile is active (default: True).
+    is_staff (BooleanField): Whether the user is a staff member (default: False).
 
     Methods:
-        __str__:
-            Returns a string representation of the profile, showing the user's username.
+    __str__:
+        Returns a string representation of the profile, showing the user's username.
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    bio = models.TextField(max_length=500, blank=True, null=True)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
-    address = models.CharField(max_length=255, blank=True, null=True)
-    email = models.EmailField(max_length=255, blank=True, null=True)
+    birth_date = models.DateField(blank=True, null=True)
+    location = models.CharField(max_length=255, blank=True, null=True)
+    email = models.EmailField(max_length=255, blank=False, null=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
 
     def __str__(self):
         """
-        String representation of the Profile model.
+        Returns a string representation of the profile.
+
+        This method returns the username of the associated user for easy
+        identification of the profile.
 
         Returns:
-            str: A string representation of the profile showing the associated user's username.
+            str: The username of the associated user.
         """
         return f'{self.user.username} Profile'
 

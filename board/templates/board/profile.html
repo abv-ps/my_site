@@ -4,6 +4,7 @@
   <p>Email: {{ user.email }}</p>
   <p>Телефон: {{ profile.phone_number|default:"Не вказано" }}</p>
   <p>Адреса: {{ profile.address|default:"Не вказано" }}</p>
+<img src="{{ user.profile.avatar.url }}" alt="Avatar" />
 
   <h3>Мої оголошення</h3>
   <ul>

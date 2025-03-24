@@ -28,6 +28,6 @@ urlpatterns = i18n_patterns(
 )
 
 urlpatterns += [
-    path('', include('board.urls')),
+    #path('', include('board.urls')),
     path('board/', include('board.urls')),
 ]
