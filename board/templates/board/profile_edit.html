@@ -1,0 +1,15 @@
+{% extends "board/base.html" %}
+
+{% block title %}Редагування профілю{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Редагування профілю</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Зберегти зміни</button>
+    </form>
+    <a href="{% url 'board:profile' %}" class="btn btn-secondary mt-3">Скасувати</a>
+</div>
+{% endblock %}

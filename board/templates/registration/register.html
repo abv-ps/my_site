@@ -3,24 +3,38 @@
 {% block title %}Реєстрація{% endblock %}
 
 {% block content %}
-<h2>Реєстрація</h2>
+<div class="container mt-5" style="max-width: 400px;">
+    <h2 class="text-center">Реєстрація</h2>
 
-<form method="post">
-    {% csrf_token %}
-    <div class="mb-3">
-        <label for="username" class="form-label">Логін</label>
-        <input type="text" name="username" id="username" class="form-control" required>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="username" class="form-label">Логін</label>
+            <input type="text" name="username" id="username" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Електронна пошта</label>
+            <input type="email" name="email" id="email" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="password1" class="form-label">Пароль</label>
+            <input type="password" name="password1" id="password1" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="password2" class="form-label">Повторіть пароль</label>
+            <input type="password" name="password2" id="password2" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Зареєструватися</button>
+    </form>
+    {% if form.errors %}
+    <div class="alert alert-danger mt-3">
+        <ul>
+            {% for field, errors in form.errors.items %}
+            <li>{{ field }}: {{ errors.0 }}</li>
+            {% endfor %}
+        </ul>
     </div>
-    <div class="mb-3">
-        <label for="password1" class="form-label">Пароль</label>
-        <input type="password" name="password1" id="password1" class="form-control" required>
-    </div>
-    <div class="mb-3">
-        <label for="password2" class="form-label">Повторіть пароль</label>
-        <input type="password" name="password2" id="password2" class="form-control" required>
-    </div>
-    <button type="submit" class="btn btn-primary">Зареєструватися</button>
-</form>
-
-<p>Вже є акаунт? <a href="{% url 'board:login' %}">Увійти</a></p>
+    {% endif %}
+    <p class="text-center mt-3">Вже є акаунт? <a href="{% url 'board:login' %}">Увійти</a></p>
+</div>
 {% endblock %}

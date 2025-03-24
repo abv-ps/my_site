@@ -17,20 +17,20 @@ This module makes use of Django's built-in authentication views and form handlin
 models and forms from the `board` application, such as `Ad`, `Comment`, `Profile`, and `User`.
 """
 
-from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
+from django.contrib.auth import login
 from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Count
 from datetime import timedelta
 
 from .models import Ad, User, Category, Comment, Profile
-from .forms import CommentForm
+from .forms import CommentForm, RegistrationForm
 
 
-def register(request) -> render:
+def register_view(request) -> render:
     """
     Handles user registration.
 
@@ -44,13 +44,14 @@ def register(request) -> render:
         HttpResponse: The rendered registration page or a redirect to the login page if the form is valid.
     """
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = RegistrationForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            user = form.save()
             messages.success(request, 'Ваш акаунт успішно створено!')
+            login(request, user)
             return redirect('board:login')
     else:
-        form = UserCreationForm()
+        form = RegistrationForm()
     return render(request, 'registration/register.html', {'form': form})
 
 
@@ -113,6 +114,48 @@ def user_profile(request, username: str) -> render:
     return render(request, 'board/profile.html', {'user': user, 'profile': profile})
 
 
+@login_required
+def edit_profile(request):
+    """
+    View for editing the user profile.
+
+    Args:
+        request (HttpRequest): The request object.
+
+    Returns:
+        HttpResponse: Renders the profile edit page with a form.
+    """
+    user_profile = request.user.profile
+
+    if request.method == "POST":
+        form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Профіль успішно оновлено!")
+            return redirect("board:profile")
+        else:
+            messages.error(request, "Будь ласка, виправте помилки у формі.")
+    else:
+        form = UserProfileForm(instance=user_profile)
+
+    return render(request, "board/profile_edit.html", {"form": form})
+
+
+@login_required
+def change_password_view(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, "Password changed successfully.")
+            return redirect('board: profile')
+        messages.error(request, "Failed to change password. Please check the errors.")
+    else:
+        form = PasswordChangeForm(user=request.user)
+    return render(request, 'change_password.html', {'form': form})
+
+
 class CustomLoginView(LoginView):
     """
     Custom login view that redirects the user to their profile page after successful login.
@@ -159,3 +202,12 @@ def ad_statistics(request) -> render:
         'category_stats': category_stats,
         'comments_count': comments_count
     })
+
+
+@login_required
+def delete_account_view(request):
+    if request.method == "POST":
+        request.user.delete()
+        logout(request)
+        return redirect("board:ad_list")
+    return render(request, "board/delete_account.html")

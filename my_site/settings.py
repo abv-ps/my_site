@@ -36,6 +36,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.facebook',
     'board',
     'main',
 ]
@@ -46,6 +52,7 @@ MIDDLEWARE = [
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -53,6 +60,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'my_site.urls'
+
+SITE_ID = 1
 
 TEMPLATES = [
     {
@@ -105,7 +114,24 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
+
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+#ACCOUNT_LOGIN_METHODS = {'email', 'username'}
+ACCOUNT_SIGNUP_FIELDS = ['email', 'username', 'password1', 'password2']
+#ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_SIGNUP_REDIRECT_URL = '/board/'
+ACCOUNT_LOGIN_REDIRECT_URL = '/board/'
+ACCOUNT_LOGOUT_REDIRECT_URL = '/board/'
+ACCOUNT_EMAIL_CONFIRMATION_REDIRECT_URL = "/board/"
+LOGIN_REDIRECT_URL = "board:profile"
+LOGIN_URL = '/accounts/login/'
+LOGOUT_URL = '/accounts/logout/'
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
@@ -134,11 +160,14 @@ LOCALE_PATHS = [
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'staticfiles/'
+STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'main', 'static')]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'main', 'static'),
+    os.path.join(BASE_DIR, 'board', 'static'),
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -153,3 +182,6 @@ EMAIL_HOST_USER = '556a80a598758f'
 EMAIL_HOST_PASSWORD = '19c8e2fc1eca82'
 
 #LOGIN_REDIRECT_URL = '/board/profile/'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

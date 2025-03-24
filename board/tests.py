@@ -209,3 +209,96 @@ class AdSignalsTest(TestCase):
         ad.is_active = False
         ad.save()
         self.assertFalse(Ad.objects.get(id=ad.id).is_active)
+
+class UserProfileFormTest(TestCase):
+    """
+    Tests for the UserProfileForm.
+    """
+
+    def setUp(self):
+        """
+        Set up a test user and profile.
+        """
+        self.user = User.objects.create_user(username="testuser", password="password123")
+        self.profile = UserProfile.objects.create(user=self.user, phone_number="123456789", address="Test Address")
+
+    def test_valid_form(self):
+        """
+        Test that a valid form saves correctly.
+        """
+        form_data = {
+            "phone_number": "987654321",
+            "address": "New Address"
+        }
+        form = UserProfileForm(data=form_data, instance=self.profile)
+        self.assertTrue(form.is_valid())
+
+    def test_invalid_phone_number(self):
+        """
+        Test that an invalid phone number does not pass validation.
+        """
+        form_data = {
+            "phone_number": "invalid_phone",
+            "address": "Some Address"
+        }
+        form = UserProfileForm(data=form_data, instance=self.profile)
+        self.assertFalse(form.is_valid())
+
+    def test_upload_avatar(self):
+        """
+        Test that an image can be uploaded as an avatar.
+        """
+        image = SimpleUploadedFile("avatar.jpg", b"file_content", content_type="image/jpeg")
+        form_data = {
+            "phone_number": "987654321",
+            "address": "New Address"
+        }
+        form = UserProfileForm(data=form_data, files={"avatar": image}, instance=self.profile)
+        self.assertTrue(form.is_valid())
+
+class EditProfileViewTest(TestCase):
+    """
+    Tests for the edit_profile view.
+    """
+
+    def setUp(self):
+        """
+        Set up a test user and log them in.
+        """
+        self.user = User.objects.create_user(username="testuser", password="password123")
+        self.client.login(username="testuser", password="password123")
+        self.profile = UserProfile.objects.create(user=self.user, phone_number="123456789", address="Test Address")
+
+    def test_get_edit_profile_page(self):
+        """
+        Test that the edit profile page loads correctly.
+        """
+        response = self.client.get(reverse("board:edit_profile"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Редагування профілю")
+
+    def test_post_valid_edit_profile(self):
+        """
+        Test submitting a valid form updates the profile.
+        """
+        response = self.client.post(reverse("board:edit_profile"), {
+            "phone_number": "987654321",
+            "address": "Updated Address"
+        })
+        self.profile.refresh_from_db()
+        self.assertEqual(self.profile.phone_number, "987654321")
+        self.assertEqual(self.profile.address, "Updated Address")
+        self.assertRedirects(response, reverse("board:profile"))
+
+    def test_post_invalid_edit_profile(self):
+        """
+        Test that submitting an invalid form does not update the profile.
+        """
+        response = self.client.post(reverse("board:edit_profile"), {
+            "phone_number": "invalid_phone",
+            "address": "Updated Address"
+        })
+        self.profile.refresh_from_db()
+        self.assertNotEqual(self.profile.phone_number, "invalid_phone")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Будь ласка, виправте помилки у формі.")

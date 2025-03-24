@@ -1,18 +1,25 @@
 {% extends "board/base.html" %}
-{% block content %}
-  <h2>Профіль користувача {{ user.username }}</h2>
-  <p>Email: {{ user.email }}</p>
-  <p>Телефон: {{ profile.phone_number|default:"Не вказано" }}</p>
-  <p>Адреса: {{ profile.address|default:"Не вказано" }}</p>
 
-  <h3>Мої оголошення</h3>
-  <ul>
+{% block content %}
+<h2>Профіль користувача {{ user.username }}</h2>
+<p>Email: {{ user.email }}</p>
+<p>Телефон: {{ profile.phone_number|default:"Не вказано" }}</p>
+<p>Адреса: {{ profile.address|default:"Не вказано" }}</p>
+<img src="{{ user.profile.avatar.url }}" alt="Avatar" style="height: 100px; width: 100px; border-radius: 50%;"/>
+
+<a href="{% url 'board:edit_profile' %}" class="btn btn-primary mt-3">Редагувати профіль</a>
+<a href="{% url 'board:change_password' %}" class="btn btn-warning mt-3">Змінити пароль</a>
+<a href="{% url 'board:delete_account' %}" class="btn btn-danger mt-3">Видалити акаунт</a>
+
+
+<h3>Мої оголошення</h3>
+<ul>
     {% for ad in user.ad_set.all %}
-      <li>
+    <li>
         <a href="{% url 'board:ad_detail' ad.id %}">{{ ad.title }}</a> ({{ ad.price }} грн)
-      </li>
+    </li>
     {% empty %}
-      <p>Немає активних оголошень</p>
+    <p>Немає активних оголошень</p>
     {% endfor %}
-  </ul>
+</ul>
 {% endblock %}

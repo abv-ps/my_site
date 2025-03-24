@@ -28,6 +28,7 @@ urlpatterns = i18n_patterns(
 )
 
 urlpatterns += [
-    path('', include('board.urls')),
+    #path('', include('board.urls')),
+    path('accounts/', include('allauth.urls')),
     path('board/', include('board.urls')),
 ]
