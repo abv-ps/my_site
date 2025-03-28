@@ -150,3 +150,6 @@ msgstr "Collapse"
 
 msgid "Show all text"
 msgstr "Show all text"
+
+msgid "Board"
+msgstr "Bulletin Board"

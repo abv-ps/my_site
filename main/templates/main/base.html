@@ -113,7 +113,7 @@
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-light">
-    <a class="navbar-brand" href="{% url 'home' %}">
+    <a class="navbar-brand" href="{% url 'main:home' %}">
         <img src="{% static 'images/Logo_blu.png' %}" alt="Boguslav Logo" style="height: 100px;"/>
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse"
@@ -123,10 +123,11 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
-            <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">{% trans "Home page" %}</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">{% trans "About us" %}</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'services' %}">{% trans "Services" %}</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">{% trans "Contact" %}</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'main:home' %}">{% trans "Home page" %}</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'board:ad_list' %}">{% trans "Board" %}</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'main:about' %}">{% trans "About us" %}</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'main:services' %}">{% trans "Services" %}</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'main:contact' %}">{% trans "Contact" %}</a></li>
         </ul>
 
         <ul class="navbar-nav lang-buttons">
@@ -161,10 +162,11 @@
 
 <footer class="footer text-center">
     <ul class="list-unstyled mb-2">
-        <li><a href="{% url 'home' %}">{% trans "Home page" %}</a></li>
-        <li><a href="{% url 'about' %}">{% trans "About us" %}</a></li>
-        <li><a href="{% url 'services' %}">{% trans "Services" %}</a></li>
-        <li><a href="{% url 'contact' %}">{% trans "Contact" %}</a></li>
+        <li><a href="{% url 'main:home' %}">{% trans "Home page" %}</a></li>
+        <li><a href="{% url 'board:ad_list' %}">{% trans "Board" %}</a></li>
+        <li><a href="{% url 'main:about' %}">{% trans "About us" %}</a></li>
+        <li><a href="{% url 'main:services' %}">{% trans "Services" %}</a></li>
+        <li><a href="{% url 'main:contact' %}">{% trans "Contact" %}</a></li>
     </ul>
     <p class="mb-0">&copy; {{ current_year }} ABV</p>
     {% block footer_additional_content %}{% endblock %}

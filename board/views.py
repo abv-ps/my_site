@@ -16,18 +16,18 @@ Classes:
 This module makes use of Django's built-in authentication views and form handling and integrates
 models and forms from the `board` application, such as `Ad`, `Comment`, `Profile`, and `User`.
 """
-
+from django.http import HttpResponse, HttpRequest, request
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import LoginView
-from django.contrib.auth import login
+from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Count
 from datetime import timedelta
 
 from .models import Ad, User, Category, Comment, Profile
-from .forms import CommentForm, RegistrationForm
+from .forms import CommentForm, RegistrationForm, UserProfileForm, PasswordChangeForm
 
 
 def register_view(request) -> render:
@@ -43,12 +43,14 @@ def register_view(request) -> render:
     Returns:
         HttpResponse: The rendered registration page or a redirect to the login page if the form is valid.
     """
+    if request.user.is_authenticated:
+        return redirect('board:user_profile', user_id=request.user.id)
     if request.method == 'POST':
         form = RegistrationForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save()
             messages.success(request, 'Ваш акаунт успішно створено!')
-            login(request, user)
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             return redirect('board:login')
     else:
         form = RegistrationForm()
@@ -96,7 +98,7 @@ def ad_detail(request, ad_id: int) -> render:
 
 
 @login_required
-def user_profile(request, username: str) -> render:
+def user_profile(request, user_id: int) -> render:
     """
     Displays the profile of a user.
 
@@ -104,18 +106,22 @@ def user_profile(request, username: str) -> render:
 
     Args:
         request (HttpRequest): The HTTP request object.
-        username (str): The username of the user whose profile to display.
+        user_id (str): The username of the user whose profile to display.
 
     Returns:
         HttpResponse: The rendered user profile page.
     """
-    user = get_object_or_404(User, username=username)
+    user = get_object_or_404(User, id=user_id)
+    if request.user != user:
+        messages.error(request, "Ви не маєте доступу до цього профілю.")
+        return redirect('board:ad_list')
     profile = get_object_or_404(Profile, user=user)
+
     return render(request, 'board/profile.html', {'user': user, 'profile': profile})
 
 
 @login_required
-def edit_profile(request):
+def edit_profile_view(request, user_id: int):
     """
     View for editing the user profile.
 
@@ -125,7 +131,10 @@ def edit_profile(request):
     Returns:
         HttpResponse: Renders the profile edit page with a form.
     """
-    user_profile = request.user.profile
+    user = get_object_or_404(User, id=user_id)
+    user_profile = get_object_or_404(Profile, user=user)
+    if request.user != user:
+        return redirect('board:profile', user_id=request.user.id)
 
     if request.method == "POST":
         form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
@@ -153,7 +162,7 @@ def change_password_view(request):
         messages.error(request, "Failed to change password. Please check the errors.")
     else:
         form = PasswordChangeForm(user=request.user)
-    return render(request, 'change_password.html', {'form': form})
+    return render(request, 'board/change_password.html', {'form': form})
 
 
 class CustomLoginView(LoginView):
@@ -171,8 +180,27 @@ class CustomLoginView(LoginView):
         Returns:
             str: The URL to the user's profile page.
         """
-        print(f"Redirecting to profile for user {self.request.user.username}")
-        return f'/board/profile/{self.request.user.username}/'
+        return f'/board/profile/{self.request.user.id}/'
+
+
+class CustomLogoutView(LogoutView):
+    """
+    Custom logout view that redirects the user to the main page after logout.
+
+    Methods:
+        get_logout_url: Returns the URL to redirect the user after logout.
+    """
+
+    def get(self, request: HttpRequest, *args: tuple, **kwargs: dict) -> HttpResponse:
+        """
+        Override the default GET method to add a success message and redirect
+        the user after logging out.
+
+        Returns:
+            str: The URL to the main page.
+        """
+        messages.success(request, "Ви успішно вийшли з системи.")
+        return redirect('/board/')
 
 
 def ad_statistics(request) -> render:
@@ -211,3 +239,9 @@ def delete_account_view(request):
         logout(request)
         return redirect("board:ad_list")
     return render(request, "board/delete_account.html")
+
+
+#print("User:", request.user)
+#print("Is authenticated:", request.user.is_authenticated)
+#print("Has profile:", hasattr(request.user, "profile"))
+#print("Avatar:", request.user.profile.avatar if hasattr(request.user, "profile") else "No profile")

@@ -156,3 +156,6 @@ msgstr "Згорнути"
 
 msgid "Show all text"
 msgstr "Показати весь текст"
+
+msgid "Board"
+msgstr "Дошка оголошень"

@@ -14,21 +14,31 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path, include
+#from django.contrib import admin
+from django.urls import path, include, reverse
+from django.http import HttpResponseRedirect
 from django.conf.urls.i18n import i18n_patterns
 from board.admin import admin_site
 
+
+def home_redirect(request):
+    """
+    Redirect from the root URL to the `/uk/home/` URL.
+    """
+    url = reverse('main:home')
+    return HttpResponseRedirect(url.replace("/en/", "/uk/"))
+
+
 urlpatterns = i18n_patterns(
     path('admin/', admin_site.urls),
-    #path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
+    path('', home_redirect),
     path('home/', include('main.urls')),
-
     path('i18n/', include('django.conf.urls.i18n')),
 )
 
 urlpatterns += [
-    #path('', include('board.urls')),
+    # path('', include('board.urls')),
     path('accounts/', include('allauth.urls')),
     path('board/', include('board.urls')),
 ]

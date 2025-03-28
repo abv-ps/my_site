@@ -17,10 +17,14 @@ Forms:
 
 """
 from django import forms
+from django.contrib.auth import password_validation
+from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordChangeForm as DjangoPasswordChangeForm
-from .models import Ad, Comment
-from .models import Profile
+from django.core.exceptions import ValidationError
+
+from .models import Ad, Comment, Profile
+from .validators import validate_avatar_image
 
 
 class AdForm(forms.ModelForm):
@@ -66,6 +70,7 @@ class CommentForm(forms.ModelForm):
         model = Comment
         fields = ['content']
 
+
 class RegistrationForm(forms.ModelForm):
     """
     A form for user registration, including user profile fields.
@@ -89,6 +94,10 @@ class RegistrationForm(forms.ModelForm):
         save: Creates a User and Profile instance.
     """
 
+    username = forms.CharField(
+        label="Логін",
+        max_length=100
+    )
     password1 = forms.CharField(
         label="Пароль",
         widget=forms.PasswordInput, min_length=8
@@ -114,12 +123,22 @@ class RegistrationForm(forms.ModelForm):
     )
     avatar = forms.ImageField(
         label="Аватар",
-        required=False
+        required=False,
+        validators=[validate_avatar_image]
     )
 
     class Meta:
-        model = User
-        fields = ["username", "email", "password1", "password2"]
+        model = Profile
+        fields = [
+            "bio",
+            "email",
+            "password1",
+            "password2",
+            "phone_number",
+            "birth_date",
+            "location",
+            "avatar",
+        ]
 
     def clean_username(self):
         username = self.cleaned_data.get("username")
@@ -150,18 +169,25 @@ class RegistrationForm(forms.ModelForm):
         The user password is securely hashed, and a profile is created with
         the additional fields provided in the form.
         """
-        user = super().save(commit=False)
-        user.set_password(self.cleaned_data["password1"])
+        user = User.objects.create_user(
+            username=self.cleaned_data["username"],
+            email=self.cleaned_data["email"],
+            password=self.cleaned_data["password1"]
+        )
         if commit:
-            user.save()
-            Profile.objects.create(
-                user=user,
-                phone_number=self.cleaned_data.get("phone_number", ""),
-                birth_date=self.cleaned_data.get("birth_date"),
-                location=self.cleaned_data.get("location", ""),
-                email=self.cleaned_data.get("email"),
-                avatar=self.cleaned_data.get("avatar")
-            )
+            if commit:
+                # Перевірка, чи існує профіль для користувача
+                profile, created = Profile.objects.get_or_create(user=user)
+
+                # Якщо профіль існує, оновлюємо його поля
+                profile.phone_number = self.cleaned_data.get("phone_number", "")
+                profile.birth_date = self.cleaned_data.get("birth_date")
+                profile.location = self.cleaned_data.get("location", "")
+                profile.email = self.cleaned_data.get("email")
+                profile.avatar = self.cleaned_data.get("avatar")
+
+                # Зберігаємо зміни профілю
+                profile.save()
         return user
 
 
@@ -175,6 +201,11 @@ class UserProfileForm(forms.ModelForm):
     Attributes:
         avatar (ImageField): Field for profile picture upload with size validation.
     """
+    avatar = forms.ImageField(
+        label="Аватар",
+        required=False,
+        validators=[validate_avatar_image]
+    )
 
     def clean_avatar(self):
         """

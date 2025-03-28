@@ -17,7 +17,8 @@ Signal Handlers:
     - deactivate_if_expired: Deactivates an `Ad` if it has been created for more than 30 days.
 
 """
-from django.db.models.signals import post_save
+import os
+from django.db.models.signals import post_save, post_delete, pre_delete
 from django.dispatch import receiver
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
@@ -110,3 +111,18 @@ def deactivate_if_expired(sender, instance, **kwargs):
             Deactivates the ad if it has expired.
     """
     instance.deactivate_if_expired()
+
+
+@receiver(pre_delete, sender=Profile)
+def delete_avatar(sender, instance, **kwargs):
+    """
+    Automatically deletes the avatar file when a Profile is deleted.
+    """
+    if instance.avatar:
+        if os.path.isfile(instance.avatar.path):
+            os.remove(instance.avatar.path)
+
+@receiver(post_delete, sender=Profile)
+def delete_user_profile(sender, instance, **kwargs):
+    if instance.user:
+        instance.user.delete()

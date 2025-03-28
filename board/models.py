@@ -25,6 +25,8 @@ from django.db import models
 from django.utils import timezone
 from datetime import timedelta
 from django.core.exceptions import ValidationError
+from django.templatetags.static import static
+from .utils import user_avatar_path
 
 
 class Profile(models.Model):
@@ -58,7 +60,10 @@ class Profile(models.Model):
     email = models.EmailField(max_length=255, blank=False, null=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    avatar = models.ImageField(upload_to=user_avatar_path, blank=True,
+                               null=True, default='media/board/avatars/default_avatar.png')
+
+
 
     def __str__(self):
         """

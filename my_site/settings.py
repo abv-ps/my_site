@@ -117,12 +117,8 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
-#ACCOUNT_LOGIN_METHODS = {'email', 'username'}
-ACCOUNT_SIGNUP_FIELDS = ['email', 'username', 'password1', 'password2']
-#ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
-ACCOUNT_USERNAME_REQUIRED = True
-ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_LOGIN_METHODS = {'email', 'username'}
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_SIGNUP_REDIRECT_URL = '/board/'
 ACCOUNT_LOGIN_REDIRECT_URL = '/board/'
@@ -141,7 +137,7 @@ LANGUAGES = [
     ('uk', _('Ukrainian')),
     ('ru', _('Russian')),
 ]
-LANGUAGE_CODE = 'en'
+LANGUAGE_CODE = 'uk'
 
 TIME_ZONE = 'UTC'
 
@@ -183,5 +179,7 @@ EMAIL_HOST_PASSWORD = '19c8e2fc1eca82'
 
 #LOGIN_REDIRECT_URL = '/board/profile/'
 
-MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
+

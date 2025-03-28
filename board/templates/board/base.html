@@ -36,6 +36,14 @@
             justify-content: center;
         }
 
+        .navbar-nav-left {
+            margin-right: auto; /* Розміщує елементи на лівій стороні */
+        }
+
+        .navbar-nav-right {
+            margin-left: auto; /* Розміщує елементи на правій стороні */
+        }
+
         .lang-buttons {
             margin-left: auto;
         }
@@ -89,7 +97,7 @@
 
     </style>
 </head>
-<body>
+<body class="d-flex flex-column" style="height: 100vh;"> <!-- Додаємо класи для фіксації футера -->
 
 <nav class="navbar navbar-expand-lg navbar-light">
     <a class="navbar-brand" href="{% url 'board:ad_list' %}">
@@ -101,55 +109,80 @@
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
+        <!-- Ліва частина навігації -->
+        <ul class="navbar-nav navbar-nav-left">
+            {% if user.is_authenticated %}
+                <li class="nav-item"><a class="nav-link"
+                                        href="{% url 'board:user_profile' user_id=user.id %}">{% trans "Профіль" %}</a>
+                </li>
+                <form action="{% url 'board:logout' %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link nav-link">{% trans "Вийти" %}</button>
+                </form>
+                {% if user.is_staff %}
+                <li class="nav-item">
+                    <a href="{% url 'admin:index' %}" class="btn btn-light">Адмінка</a>
+                </li>
+            {% endif %}
+            {% else %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'board:login' %}">{% trans "Увійти" %}</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'board:register' %}">{% trans "Реєстрація" %}</a>
+                </li>
+            {% endif %}
+        </ul>
+
+        <!-- Центральна частина навігації -->
         <ul class="navbar-nav">
             <li class="nav-item"><a class="nav-link" href="{% url 'board:ad_list' %}">{% trans "Оголошення" %}</a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'board:ad_statistics' %}">{% trans "Статистика" %}</a>
+            <li class="nav-item"><a class="nav-link" href="{% url 'main:home' %}">{% trans "Домашня сторінка" %}</a>
             </li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'board:login' %}">{% trans "Увійти" %}</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'board:register' %}">{% trans "Реєстрація" %}</a></li>
         </ul>
 
-        <ul class="navbar-nav ml-auto">
+        <!-- Права частина навігації (аватар) -->
+        <ul class="navbar-nav navbar-nav-right">
             {% if user.is_authenticated %}
-            <li class="nav-item">
-                {% if user.profile.avatar %}
-                <img src="{{ user.profile.avatar.url }}" alt="Avatar" class="img-fluid"
-                     style="height: 40px; width: 40px; border-radius: 50%;">
-                {% else %}
-                <img src="{% static 'images/default_avatar.png' %}" alt="Default Avatar"
-                     class="img-fluid" style="height: 40px; width: 40px; border-radius: 50%;">
-                {% endif %}
-            </li>
+                <li class="nav-item">
+                    {% if user.profile.avatar %}
+                        <img src="{{ user.profile.get_avatar_url }}" alt="Avatar" class="img-fluid"
+                             style="height: 100px; width: 100px;">
+                    {% else %}
+                        <img src="{% static 'images/avatars/default_avatar.png' %}" alt="Default Avatar"
+                             class="img-fluid" style="height: 100px; width: 100px;">
+                    {% endif %}
+                </li>
             {% else %}
-            <li class="nav-item">
-                <img src="{% static 'images/default_avatar.png' %}" alt="Default Avatar" class="img-fluid"
-                     style="height: 40px; width: 40px; border-radius: 50%;">
-            </li>
+                <li class="nav-item">
+                    <img src="{% static 'images/avatars/default_avatar.png' %}" alt="Default Avatar" class="img-fluid"
+                         style="height: 100px; width: 100px;">
+                </li>
             {% endif %}
         </ul>
     </div>
 </nav>
-
-
+<p>Avatar: {{ user.profile.avatar }}</p>
+<p>Avatar URL: {{ user.profile.avatar.url }}</p>
+<p>Authenticated: {{ user.is_authenticated }}</p>
 <div class="content container mt-4">
     {% block content %}{% endblock %}
 </div>
+
 {% if messages %}
-<div class="container mt-3">
-    {% for message in messages %}
-    <div class="alert alert-{% if message.tags == 'success' %}success{% elif message.tags == 'error' %}danger{% else %}info{% endif %}"
-         role="alert">
-        {{ message }}
+    <div class="container mt-3">
+        {% for message in messages %}
+            <div class="alert alert-{% if message.tags == 'success' %}success{% elif message.tags == 'error' %}danger{% else %}info{% endif %}"
+                 role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-</div>
 {% endif %}
 
-
-<footer class="footer text-center">
+<footer class="footer text-center mt-auto"> <!-- Використовуємо mt-auto для того, щоб футер завжди був внизу -->
     <ul class="list-unstyled mb-2">
         <li><a href="{% url 'board:ad_list' %}">{% trans "Оголошення" %}</a></li>
         <li><a href="{% url 'board:ad_statistics' %}">{% trans "Статистика" %}</a></li>
+        <li><a href="{% url 'main:home' %}">{% trans "Домашня сторінка" %}</a></li>
         <li><a href="{% url 'board:login' %}">{% trans "Увійти" %}</a></li>
         <li><a href="{% url 'board:register' %}">{% trans "Реєстрація" %}</a></li>
     </ul>

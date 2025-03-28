@@ -1,23 +1,47 @@
 {% extends "board/base.html" %}
+
 {% block content %}
-    <h2>Статистика</h2>
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Статистика -->
+            <div class="col-md-6">
+                <h2>Статистика</h2>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        Оголошень створено за останній місяць: <strong>{{ ads_last_month }}</strong>
+                    </li>
+                    <li class="list-group-item">
+                        Активних оголошень: <strong>{{ active_ads }}</strong>
+                    </li>
+                    <li class="list-group-item">
+                        Неактивних оголошень: <strong>{{ inactive_ads }}</strong>
+                    </li>
+                    <li class="list-group-item">
+                        Загальна кількість коментарів: <strong>{{ comments_count }}</strong>
+                    </li>
+                </ul>
+            </div>
 
-    <p>Оголошень створено за останній місяць: <strong>{{ ads_last_month }}</strong></p>
-    <p>Активних оголошень: <strong>{{ active_ads }}</strong></p>
-    <p>Неактивних оголошень: <strong>{{ inactive_ads }}</strong></p>
-    <p>Загальна кількість коментарів: <strong>{{ comments_count }}</strong></p>
-
-    <h3>Оголошення за категоріями</h3>
-    <table border="1">
-        <tr>
-            <th>Категорія</th>
-            <th>Кількість оголошень</th>
-        </tr>
-        {% for category in category_stats %}
-            <tr>
-                <td>{{ category.name }}</td>
-                <td>{{ category.num_ads }}</td>
-            </tr>
-        {% endfor %}
-    </table>
+            <!-- Оголошення за категоріями -->
+            <div class="col-md-6">
+                <h3>Оголошення за категоріями</h3>
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Категорія</th>
+                            <th class="text-center">Кількість оголошень</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for category in category_stats %}
+                            <tr>
+                                <td>{{ category.name }}</td>
+                                <td class="text-center">{{ category.num_ads }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 {% endblock %}
