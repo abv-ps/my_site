@@ -20,11 +20,41 @@ Models:
 
 Each model provides various methods for managing the data, including string representations, validation methods, and helper functions.
 """
+import os
+import uuid
+
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 from datetime import timedelta
 from django.core.exceptions import ValidationError
+from .validators import validate_phone_number, validate_avatar_image
+#from .utils import get_default_avatar, get_avatar_upload_path
+
+def get_avatar_upload_path(instance: "Profile", filename: str) -> str:
+    """
+    Generates the path for saving user avatars inside the respective app's folder.
+
+    Args:
+        instance (Model): The model instance containing the image field.
+        filename (str): The name of the uploaded file.
+
+    Returns:
+        str: The file path where the avatar will be stored.
+
+    Examples:
+        >>> class MockInstance:
+        ...     class _meta:
+        ...         app_label = "board"
+        >>> get_avatar_upload_path(MockInstance(), "avatar.jpg")
+        'board/avatars/avatar.jpg'
+    """
+    ext = filename.split('.')[-1]
+    unique_filename = f"{uuid.uuid4()}.{ext}"
+    return os.path.join('board', 'avatars', str(instance.user.id), unique_filename)
+
+def get_default_avatar():
+    return os.path.join('board', 'avatars', 'default_avatar.png')
 
 
 class Profile(models.Model):
@@ -52,13 +82,15 @@ class Profile(models.Model):
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     bio = models.TextField(max_length=500, blank=True, null=True)
-    phone_number = models.CharField(max_length=20, blank=True, null=True)
+    phone_number = models.CharField(max_length=20, blank=True, null=True, validators=[validate_phone_number])
     birth_date = models.DateField(blank=True, null=True)
     location = models.CharField(max_length=255, blank=True, null=True)
     email = models.EmailField(max_length=255, blank=False, null=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    avatar = models.ImageField(upload_to=get_avatar_upload_path, blank=True,
+                               null=True, default=get_default_avatar,
+                               validators=[validate_avatar_image])
 
     def __str__(self):
         """

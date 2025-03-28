@@ -151,6 +151,11 @@ class ProfileAdmin(admin.ModelAdmin):
     Methods:
         None
     """
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        form.base_fields['email'].required = False
+        return form
     list_display = ('user', 'bio', 'birth_date', 'phone_number', 'location', 'email', 'is_active', 'is_staff')
     search_fields = ('user', 'email', 'phone_number', 'bio', 'location')
 

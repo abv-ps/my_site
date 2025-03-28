@@ -7,9 +7,19 @@
     <h2>Редагування профілю</h2>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}
+        <div class="row">
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label for="bio" class="form-label">Біографія</label>
+                    {{ form.bio }}
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                {{ form.as_p|slice:"1:" }}  </div>
+        </div>
         <button type="submit" class="btn btn-primary">Зберегти зміни</button>
     </form>
-    <a href="{% url 'board:profile' %}" class="btn btn-secondary mt-3">Скасувати</a>
+    <a href="{% url 'board:user_profile' user_id %}" class="btn btn-secondary mt-3">Скасувати</a>
 </div>
 {% endblock %}

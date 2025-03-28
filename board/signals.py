@@ -17,7 +17,8 @@ Signal Handlers:
     - deactivate_if_expired: Deactivates an `Ad` if it has been created for more than 30 days.
 
 """
-from django.db.models.signals import post_save
+import os
+from django.db.models.signals import post_save, post_delete, pre_delete
 from django.dispatch import receiver
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
@@ -30,7 +31,7 @@ def create_user_profile(sender, instance, created, **kwargs):
     Signal handler that creates a `Profile` instance for a new `User` after saving the `User`.
 
     This signal is triggered after a new `User` instance is created. When a new user is created,
-    a corresponding profile is also created.
+    a corresponding profile is also created, but only if the user does not already have a profile.
 
     Args:
         sender (class): The model class that triggered the signal (`User`).
@@ -40,9 +41,13 @@ def create_user_profile(sender, instance, created, **kwargs):
 
     Methods:
         None
+
+    Note:
+        If the user already has a profile (via `instance.profile`), no new profile will be created.
     """
-    if created:
-        Profile.objects.create(user=instance)
+    #if created:
+        #print("create user")
+        #Profile.objects.get_or_create(user=instance)
 
 
 @receiver(post_save, sender=User)
@@ -60,8 +65,13 @@ def save_user_profile(sender, instance, **kwargs):
 
     Methods:
         None
+
+    Note:
+        This signal will only save the profile if it already exists for the user.
     """
-    instance.profile.save()
+    #if hasattr(instance, 'profile'):
+        #print("save user")
+        #instance.profile.save()
 
 
 @receiver(post_save, sender=Ad)
@@ -110,3 +120,18 @@ def deactivate_if_expired(sender, instance, **kwargs):
             Deactivates the ad if it has expired.
     """
     instance.deactivate_if_expired()
+
+
+@receiver(pre_delete, sender=Profile)
+def delete_avatar(sender, instance, **kwargs):
+    """
+    Automatically deletes the avatar file when a Profile is deleted.
+    """
+    if instance.avatar:
+        if os.path.isfile(instance.avatar.path):
+            os.remove(instance.avatar.path)
+
+@receiver(post_delete, sender=Profile)
+def delete_user_profile(sender, instance, **kwargs):
+    if instance.user:
+        instance.user.delete()

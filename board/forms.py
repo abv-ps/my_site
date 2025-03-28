@@ -16,11 +16,19 @@ Forms:
       the `content` field for the comment text.
 
 """
+import os
+import re
+import uuid
+
 from django import forms
+from django.contrib.auth import password_validation
+from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordChangeForm as DjangoPasswordChangeForm
-from .models import Ad, Comment
-from .models import Profile
+from django.core.exceptions import ValidationError
+
+from .models import Ad, Comment, Profile
+from .validators import validate_avatar_image
 
 
 class AdForm(forms.ModelForm):
@@ -66,6 +74,7 @@ class CommentForm(forms.ModelForm):
         model = Comment
         fields = ['content']
 
+
 class RegistrationForm(forms.ModelForm):
     """
     A form for user registration, including user profile fields.
@@ -89,37 +98,58 @@ class RegistrationForm(forms.ModelForm):
         save: Creates a User and Profile instance.
     """
 
+    username = forms.CharField(
+        label="Логін",
+        max_length=100,
+        widget=forms.TextInput(attrs={"placeholder": "Введіть логін"})
+    )
+    email = forms.EmailField(
+        label="Електронна пошта",
+        max_length=255,
+        widget=forms.EmailInput(attrs={"placeholder": "Введіть електронну пошту"})
+    )
     password1 = forms.CharField(
         label="Пароль",
-        widget=forms.PasswordInput, min_length=8
+        widget=forms.PasswordInput(attrs={"placeholder": "Введіть пароль"}),
+        min_length=8
     )
     password2 = forms.CharField(
         label="Повторіть пароль",
-        widget=forms.PasswordInput, min_length=8
+        widget=forms.PasswordInput(attrs={"placeholder": "Повторіть пароль"}),
+        min_length=8
     )
     phone_number = forms.CharField(
         label="Номер телефону",
         max_length=20,
-        required=False
+        required=False,
+        widget=forms.TextInput(attrs={"placeholder": "Введіть номер телефону"})
     )
     birth_date = forms.DateField(
         label="Дата народження",
         required=False,
-        widget=forms.DateInput(attrs={"type": "date"})
+        widget=forms.DateInput(attrs={"type": "date", "placeholder": "РРРР-ММ-ДД"})
     )
     location = forms.CharField(
         label="Адреса",
         max_length=255,
-        required=False
+        required=False,
+        widget=forms.TextInput(attrs={"placeholder": "Введіть адресу"})
     )
     avatar = forms.ImageField(
         label="Аватар",
-        required=False
+        required=False,
+        validators=[validate_avatar_image],
+        widget=forms.FileInput(attrs={"placeholder": "Виберіть аватар"})
     )
 
     class Meta:
-        model = User
-        fields = ["username", "email", "password1", "password2"]
+        model = Profile
+        fields = [
+            "phone_number",
+            "birth_date",
+            "location",
+            "avatar",
+        ]
 
     def clean_username(self):
         username = self.cleaned_data.get("username")
@@ -150,18 +180,22 @@ class RegistrationForm(forms.ModelForm):
         The user password is securely hashed, and a profile is created with
         the additional fields provided in the form.
         """
-        user = super().save(commit=False)
-        user.set_password(self.cleaned_data["password1"])
+        user = User.objects.create_user(
+            username=self.cleaned_data["username"],
+            email=self.cleaned_data["email"],
+            password=self.cleaned_data["password1"]
+        )
+        profile, created = Profile.objects.get_or_create(user=user)
+        profile.phone_number = self.cleaned_data.get("phone_number", "")
+        profile.birth_date = self.cleaned_data.get("birth_date")
+        profile.location = self.cleaned_data.get("location", "")
+        profile.avatar = self.cleaned_data.get("avatar")
+
+        print(f"Файл аватара буде збережено за шляхом: {profile.avatar.path}")
         if commit:
-            user.save()
-            Profile.objects.create(
-                user=user,
-                phone_number=self.cleaned_data.get("phone_number", ""),
-                birth_date=self.cleaned_data.get("birth_date"),
-                location=self.cleaned_data.get("location", ""),
-                email=self.cleaned_data.get("email"),
-                avatar=self.cleaned_data.get("avatar")
-            )
+            profile.save()
+            print(f"Файл аватара вже збережено за шляхом: {profile.avatar.path}")
+        print(f"Файл аватара НЕ збережено за шляхом: {profile.avatar.path} але є {profile.avatar.url}")
         return user
 
 
@@ -175,6 +209,18 @@ class UserProfileForm(forms.ModelForm):
     Attributes:
         avatar (ImageField): Field for profile picture upload with size validation.
     """
+    email = forms.EmailField(required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.email:
+            self.fields["email"].initial = self.instance.email
+
+    avatar = forms.ImageField(
+        label="Аватар",
+        required=False,
+        validators=[validate_avatar_image]
+    )
 
     def clean_avatar(self):
         """
@@ -187,8 +233,9 @@ class UserProfileForm(forms.ModelForm):
             forms.ValidationError: If the file size exceeds 2MB.
         """
         avatar = self.cleaned_data.get("avatar")
-        if avatar and avatar.size > 2 * 1024 * 1024:  # 2MB limit
-            raise forms.ValidationError("The avatar file size must not exceed 2MB.")
+        if avatar:
+            if avatar.size > 2 * 1024 * 1024:
+                raise forms.ValidationError("The avatar file size should be less than 2MB.")
         return avatar
 
     class Meta:
@@ -198,7 +245,6 @@ class UserProfileForm(forms.ModelForm):
             "phone_number",
             "birth_date",
             "location",
-            "email",
             "is_active",
             "is_staff",
             "avatar"
