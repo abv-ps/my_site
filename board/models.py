@@ -1,4 +1,6 @@
 """
+Module 'board.models'
+
 This module defines the models for the 'board' application in Django, which include:
 - Profile: Represents the user profile with additional user information.
 - Category: Represents an advertisement category.
@@ -11,49 +13,57 @@ Module Dependencies:
 - `django.utils.timezone`: Provides timezone utilities, including the current time.
 - `datetime.timedelta`: Used to handle date calculations for ad expiration.
 - `django.core.exceptions.ValidationError`: Used for custom model validation.
+- `os`: Used for file path operations.
+- `uuid`: Used for generating unique filenames.
+- `.validators.validate_phone_number`: Custom validator for phone numbers.
+- `.validators.validate_avatar_image`: Custom validator for avatar images.
 
 Models:
-    - Profile: Stores additional information about the user such as phone number, address, and email.
+    - Profile: Stores additional information about the user such as phone number,
+      address, and email.
     - Category: Stores information about advertisement categories and their descriptions.
-    - Ad: Stores advertisements, including details such as title, description, price, creation date, and category.
+    - Ad: Stores advertisements, including details such as title, description, price,
+      creation date, and category.
     - Comment: Stores user comments on advertisements.
 
-Each model provides various methods for managing the data, including string representations, validation methods, and helper functions.
+Each model provides various methods for managing the data, including string representations,
+validation methods, and helper functions.
 """
 import os
 import uuid
+from datetime import timedelta
 
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
-from datetime import timedelta
 from django.core.exceptions import ValidationError
+
 from .validators import validate_phone_number, validate_avatar_image
-#from .utils import get_default_avatar, get_avatar_upload_path
+
 
 def get_avatar_upload_path(instance: "Profile", filename: str) -> str:
     """
     Generates the path for saving user avatars inside the respective app's folder.
 
     Args:
-        instance (Model): The model instance containing the image field.
-        filename (str): The name of the uploaded file.
+        instance: The model instance containing the image field.
+        filename: The name of the uploaded file.
 
     Returns:
-        str: The file path where the avatar will be stored.
-
-    Examples:
-        >>> class MockInstance:
-        ...     class _meta:
-        ...         app_label = "board"
-        >>> get_avatar_upload_path(MockInstance(), "avatar.jpg")
-        'board/avatars/avatar.jpg'
+        The file path where the avatar will be stored.
     """
     ext = filename.split('.')[-1]
     unique_filename = f"{uuid.uuid4()}.{ext}"
     return os.path.join('board', 'avatars', str(instance.user.id), unique_filename)
 
-def get_default_avatar():
+
+def get_default_avatar() -> str:
+    """
+    Returns the default avatar path.
+
+    Returns:
+        The default avatar path.
+    """
     return os.path.join('board', 'avatars', 'default_avatar.png')
 
 
@@ -66,23 +76,24 @@ class Profile(models.Model):
     birth date, and user status (whether the user is active or a staff member).
 
     Attributes:
-    user (OneToOneField): A one-to-one relationship with the `User` model,
-                           representing the associated user.
-    bio (TextField): A short biography or description of the user (optional).
-    phone_number (CharField): The user's phone number (optional).
-    birth_date (DateField): The user's birth date (optional).
-    location (CharField): The user's address or location (optional).
-    email (EmailField): The user's email address (optional).
-    is_active (BooleanField): Whether the user's profile is active (default: True).
-    is_staff (BooleanField): Whether the user is a staff member (default: False).
+        user (OneToOneField): A one-to-one relationship with the `User` model,
+                              representing the associated user.
+        bio (TextField): A short biography or description of the user (optional).
+        phone_number (CharField): The user's phone number (optional).
+        birth_date (DateField): The user's birth date (optional).
+        location (CharField): The user's address or location (optional).
+        email (EmailField): The user's email address (optional).
+        is_active (BooleanField): Whether the user's profile is active (default: True).
+        is_staff (BooleanField): Whether the user is a staff member (default: False).
+        avatar (ImageField): The user's avatar image.
 
     Methods:
-    __str__:
-        Returns a string representation of the profile, showing the user's username.
+        __str__: Returns a string representation of the profile, showing the user's username.
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     bio = models.TextField(max_length=500, blank=True, null=True)
-    phone_number = models.CharField(max_length=20, blank=True, null=True, validators=[validate_phone_number])
+    phone_number = models.CharField(max_length=20, blank=True, null=True,
+                                    validators=[validate_phone_number])
     birth_date = models.DateField(blank=True, null=True)
     location = models.CharField(max_length=255, blank=True, null=True)
     email = models.EmailField(max_length=255, blank=False, null=False)
@@ -92,7 +103,7 @@ class Profile(models.Model):
                                null=True, default=get_default_avatar,
                                validators=[validate_avatar_image])
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         Returns a string representation of the profile.
 
@@ -100,7 +111,7 @@ class Profile(models.Model):
         identification of the profile.
 
         Returns:
-            str: The username of the associated user.
+            The username of the associated user.
         """
         return f'{self.user.username} Profile'
 
@@ -126,7 +137,7 @@ class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField()
 
-    def get_active_ads_count(self):
+    def get_active_ads_count(self) -> int:
         """
         Gets the count of active ads in this category.
 
@@ -135,14 +146,14 @@ class Category(models.Model):
         """
         return self.ad_set.filter(is_active=True).count()
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
-       String representation of the Category model.
+        String representation of the Category model.
 
-       Returns:
+        Returns:
            str: The name of the category.
-       """
-        return self.name
+        """
+        return str(self.name)
 
 
 class Ad(models.Model):
@@ -185,16 +196,16 @@ class Ad(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
-    def short_description(self):
+    def short_description(self) -> str:
         """
         Returns the first 100 characters of the ad's description.
 
         Returns:
             str: The truncated description (first 100 characters).
         """
-        return self.description[:100]
+        return str(self.description[:100])
 
-    def deactivate_if_expired(self):
+    def deactivate_if_expired(self) -> None:
         """
         Deactivates the ad if it has been created more than 30 days ago.
 
@@ -205,7 +216,7 @@ class Ad(models.Model):
             self.is_active = False
             self.save()
 
-    def clean(self):
+    def clean(self) -> None:
         """
         Validates the price to ensure it is a positive value.
 
@@ -215,14 +226,14 @@ class Ad(models.Model):
         if self.price <= 0:
             raise ValidationError("Ціна має бути додатним числом.")
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         String representation of the Ad model.
 
         Returns:
             str: The title of the ad.
         """
-        return self.title
+        return str(self.title)
 
 
 class Comment(models.Model):
@@ -247,11 +258,11 @@ class Comment(models.Model):
     ad = models.ForeignKey(Ad, related_name='comments', on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         String representation of the Comment model.
 
         Returns:
             str: The first 50 characters of the comment content.
         """
-        return self.content[:50]
+        return str(self.content[:50])
