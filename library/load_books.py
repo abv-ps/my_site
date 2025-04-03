@@ -1,9 +1,23 @@
+"""
+Script for loading test data into the Library API.
+
+This script uses the 'requests' library to send POST requests to the API
+to create books in the database. It utilizes an authorization token for
+accessing the API.
+
+Example usage:
+    python load_test_data.py
+
+Dependencies:
+    requests
+    json
+"""
 import requests
 import json
 
 url = 'http://127.0.0.1:8000/api/books/'
-#access_token = 'YOUR_ACCESS_TOKEN'
-access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQzNjkyNzAzLCJpYXQiOjE3NDM2OTI0MDMsImp0aSI6IjdlZDAyOGNmOTdjMTQ4ZmRhNGU3ZTE1ZGMxYTk4MTUyIiwidXNlcl9pZCI6MX0.BosuxQAIXo1ZFxLfQzOt8ojBoMlMXAIyn2TAgU1fPmU"
+access_token = 'YOUR_ACCESS_TOKEN'
+
 
 books = [
     {"title": "Тіні забутих предків", "author": "Михайло Коцюбинський", "genre": "Проза", "publication_year": 1911},
