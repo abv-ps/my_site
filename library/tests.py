@@ -19,7 +19,8 @@ class BookAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_list_books(self):
-        Book.objects.create(title="Book 1", author="Author 1", genre="Fiction", publication_year=2020, user=self.user)
+        Book.objects.create(title="Book 1", author="Author 1",
+                            genre="Fiction", publication_year=2020, user=self.user)
         response = self.client.get('/books/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 

@@ -37,7 +37,7 @@ from .views import (CustomLoginView,
                     delete_account_view
                     )
 
-APP_NAME = "board"
+app_name = "board"
 
 urlpatterns = [
 
