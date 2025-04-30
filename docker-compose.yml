@@ -1,0 +1,27 @@
+services:
+  custom_postgres2:
+    image: postgres:17.4
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - mydbdata:/var/lib/posgresql/data
+
+  web:
+    build: .
+    command: bash -c "python manage.py migrate &&
+                      python manage.py runserver"
+    volumes:
+      - .:/app
+      - media_data:/app/media/
+    env_file:
+      - .env
+    depends_on:
+      - custom_postgres2
+    ports:
+      - "8000:8000"
+volumes:
+  mydbdata:
+
+
