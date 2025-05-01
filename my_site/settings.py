@@ -59,6 +59,8 @@ INSTALLED_APPS = [
     'django_filters',
     'rest_framework_simplejwt',
     'drf_yasg',
+    'celery_tasks',
+    'django_celery_beat',
 ]
 
 REST_FRAMEWORK = {
@@ -208,8 +210,8 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-#EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend' # розкоментувати для тестування
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'# закоментувати для тестування
+EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend' # розкоментувати для тестування
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'# закоментувати для тестування
 EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
 EMAIL_PORT = 2525
 EMAIL_HOST_USER = '556a80a598758f'
@@ -218,6 +220,13 @@ EMAIL_HOST_PASSWORD = '19c8e2fc1eca82'
 #LOGIN_REDIRECT_URL = '/board/profile/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "amqp://guest:guest@localhost:5672//")
+CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", "rpc://")
 
 
 

@@ -5,11 +5,20 @@
 1. **Create a `.env` file** in the root directory with the following keys:
     DJANGO_SECRET_KEY=your_key
     DJANGO_DEBUG=True (for local development)
+
     POSTGRES_DB=name_your_db
     POSTGRES_USER=your_user
     POSTGRES_PASSWORD=your_password
     POSTGRES_HOST=custom_postgres
-    POSTGRES_PORT=some_port
+    POSTGRES_PORT=5432
+
+    ****RabbitMQ (for Celery)****
+    RABBITMQ_USER=myuser
+    RABBITMQ_PASSWORD=mypassword
+    RABBITMQ_VHOST=my_vhost
+
+    CELERY_BROKER_URL=amqp://myuser:mypassword@rabbitmq:5672/my_vhost
+    CELERY_RESULT_BACKEND=rpc://
 
 
 2. **Create a superuser (optional):**
@@ -32,6 +41,18 @@ user.save()
 
 docker-compose up --build
 
+3. Access services:
+
 The application will be available at: http://localhost:8000
 
+RabbitMQ Web UI: http://localhost:15672
+
+```
+Login: myuser
+Password: mypassword
+```
+
+Flower (Celery monitoring): http://localhost:5555
+
 Uploaded media (e.g. images via ImageField) will be stored in a Docker volume (media_data), mapped to /app/media/ inside the container.
+

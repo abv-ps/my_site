@@ -59,6 +59,7 @@ from django.db.models import Count
 
 from .models import Ad, User, Category, Comment, Profile
 from .forms import CommentForm, RegistrationForm, UserProfileForm, PasswordChangeForm, AdForm
+from celery_tasks.tasks import send_registration_email, send_advertisement_email
 
 
 def register_view(request: HttpRequest) -> HttpResponse:
@@ -80,6 +81,9 @@ def register_view(request: HttpRequest) -> HttpResponse:
         form = RegistrationForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save()
+            send_registration_email.delay(user.id)
+            send_advertisement_email.apply_async((user.id,), countdown=600)
+
             messages.success(request, 'Ваш акаунт успішно створено!')
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             return redirect('board:user_profile', user_id=user.id)

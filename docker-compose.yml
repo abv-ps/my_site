@@ -1,27 +1,74 @@
 services:
-  custom_postgres2:
+  custom_postgres:
     image: postgres:17.4
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - mydbdata:/var/lib/posgresql/data
+      - mydbdata:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: rabbitmq:4.0.9
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"     # для Celery
+      - "15672:15672"   # веб-інтерфейс RabbitMQ
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
 
   web:
     build: .
     command: bash -c "python manage.py migrate &&
-                      python manage.py runserver"
+                      python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
       - media_data:/app/media/
     env_file:
       - .env
     depends_on:
-      - custom_postgres2
+      - custom_postgres
     ports:
       - "8000:8000"
+
+
+  celery:
+    build: .
+    command: ./celery_tasks/start_celery.sh
+    depends_on:
+      - rabbitmq
+    volumes:
+      - .:/app
+
+  celery-beat:
+    build: .
+    command: celery -A celery_tasks beat --loglevel=info
+    depends_on:
+      - rabbitmq
+    volumes:
+      - .:/app
+    env_file:
+        - .env
+
+  flower:
+    image: mher/flower:2.0.1
+    environment:
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+    ports:
+      - "5555:5555"
+    depends_on:
+      - rabbitmq
+    env_file:
+      - .env
+
+
 volumes:
   mydbdata:
+  media_data:
+  rabbitmq_data:
 
 

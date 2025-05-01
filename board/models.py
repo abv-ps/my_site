@@ -64,7 +64,7 @@ def get_default_avatar() -> str:
     Returns:
         The default avatar path.
     """
-    return os.path.join('board', 'avatars', 'default_avatar.png')
+    return os.path.join('board', 'default_avatar.png')
 
 
 class Profile(models.Model):
