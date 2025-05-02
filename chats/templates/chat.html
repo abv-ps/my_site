@@ -1,0 +1,37 @@
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Chat Room</h1>
+<input id="messageInput" type="text" placeholder="Type a message...">
+<button onclick="sendMessage()">Send</button>
+<ul id="messages"></ul>
+
+<script>
+    let chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat');
+
+    chatSocket.onmessage = function (e) {
+        let data = JSON.parse(e.data);
+        let message = data['message'];
+        console.log(message);
+        document.querySelector('#messages').innerHTML += '<li>' + message + '</li>';
+    };
+
+    chatSocket.onclose = function (e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    function sendMessage() {
+        var messageInputDom = document.querySelector('#messageInput');
+        var message = messageInputDom.value;
+        chatSocket.send(JSON.stringify({
+            "message": message
+        }));
+        messageInputDom.value = '';
+    }
+</script>
+</body>
+</html>

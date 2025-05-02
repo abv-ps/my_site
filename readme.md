@@ -20,6 +20,8 @@
     CELERY_BROKER_URL=amqp://myuser:mypassword@rabbitmq:5672/my_vhost
     CELERY_RESULT_BACKEND=rpc://
 
+    CHAT_BROKER_URL=redis://redis:6379/1
+
 
 2. **Create a superuser (optional):**
 

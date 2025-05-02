@@ -61,6 +61,8 @@ INSTALLED_APPS = [
     'drf_yasg',
     'celery_tasks',
     'django_celery_beat',
+    'chats',
+    'channels'
 ]
 
 REST_FRAMEWORK = {
@@ -228,5 +230,16 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "amqp://guest:guest@localhost:5672//")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", "rpc://")
 
+CHAT_BROKER_URL = os.getenv("CHAT_BROKER_URL", "redis://redis:6379/1")
 
+ASGI_APPLICATION = 'my_site.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [CHAT_BROKER_URL],
+        },
+    },
+}
 

@@ -43,6 +43,7 @@ urlpatterns += [
     # path('', include('board.urls')),
     path('accounts/', include('allauth.urls')),
     path('board/', include('board.urls')),
+    path('chat/', include('chats.urls')),
 ]
 
 urlpatterns += [
