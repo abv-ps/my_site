@@ -47,6 +47,7 @@ Dependencies:
 from typing import Any
 from datetime import timedelta
 
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.http import HttpResponse, HttpRequest, Http404, HttpResponseBase
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
@@ -81,12 +82,27 @@ def register_view(request: HttpRequest) -> HttpResponse:
         form = RegistrationForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save()
+
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+            refresh_token = str(refresh)
+
+            response_data = {
+                'access_token': access_token,
+                'refresh_token': refresh_token,
+            }
+
             send_registration_email.delay(user.id)
             send_advertisement_email.apply_async((user.id,), countdown=600)
 
-            messages.success(request, 'Ваш акаунт успішно створено!')
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-            return redirect('board:user_profile', user_id=user.id)
+            messages.success(request, 'Ваш акаунт успішно створено!')
+            # return redirect('board:user_profile', user_id=user.id)
+
+            response = redirect('board:user_profile', user_id=user.id)
+            response.set_cookie('access_token', access_token)
+            response.set_cookie('refresh_token', refresh_token)
+            return response
         return render(request, 'registration/register.html', {'form': form})
     form = RegistrationForm()
     return render(request, 'registration/register.html', {'form': form})

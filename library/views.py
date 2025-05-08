@@ -94,12 +94,16 @@ class RegisterView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
+
         headers = self.get_success_headers(serializer.data)
         user = User.objects.get(username=serializer.data['username'])
-        tokens = TokenManager.generate_tokens(user)
+
         ip_address = request.META.get('REMOTE_ADDR')
-        TokenManager.save_token_usage(user, tokens['access'], ip_address)
-        return Response(tokens, status=status.HTTP_201_CREATED, headers=headers)
+        token_key = TokenManager.generate_and_save_token(user, ip_address)
+
+        response = Response({'token': token_key}, status=status.HTTP_201_CREATED, headers=headers)
+        response.set_cookie('token', token_key)
+        return response
 
 
 def delete_instance(model_name: str, pk: int) -> Response:

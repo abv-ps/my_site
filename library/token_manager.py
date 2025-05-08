@@ -6,46 +6,57 @@ It includes the `TokenManager` class, which contains static methods for generati
 JWT token pairs and saving token usage information.
 """
 from typing import Optional
-
-from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
 from .models import TokenUsage, hash_token
-
 
 class TokenManager:
     """
-    Utility class for managing authentication tokens.
+    Utility class for managing DRF (non-JWT) authentication tokens.
     """
 
     @staticmethod
-    def generate_tokens(user: User) -> dict[str, str]:
+    def generate_token(user: User) -> str:
         """
-        Generates JWT token pairs (refresh and access) for a user.
+        Generates or retrieves a DRF Token for a user.
 
         Args:
-            user (User): The user for whom to generate tokens.
+            user (User): The user for whom to generate the token.
 
         Returns:
-            dict: A dictionary containing the refresh and access tokens.
+            str: The authentication token.
         """
-        refresh: RefreshToken = RefreshToken.for_user(user)
-        access_token: str = str(refresh.access_token)
-        return {
-            'refresh': str(refresh),
-            'access': access_token,
-        }
+        token, _ = Token.objects.get_or_create(user=user)
+        return token.key
 
     @staticmethod
-    def save_token_usage(user: User, access_token: str, ip_address: Optional[str] = None) -> None:
+    def save_token_usage(user: User, token_key: str, ip_address: Optional[str] = None) -> None:
         """
-        Saves the usage of an access token.
+        Saves the usage of a token.
 
         Args:
             user (User): The user associated with the token.
-            access_token (str): The access token.
+            token_key (str): The token key.
             ip_address (str, optional): The IP address from which the token was used.
         """
-        TokenUsage.objects.create(user=user,
-                                  token_hash=hash_token(access_token),
-                                  ip_address=ip_address
-                                  )
+        TokenUsage.objects.create(
+            user=user,
+            token_hash=hash_token(token_key),
+            ip_address=ip_address
+        )
+
+    @staticmethod
+    def generate_and_save_token(user: User, ip_address: Optional[str] = None) -> str:
+        """
+        Generates a DRF token and saves its usage info.
+
+        Args:
+            user (User): The user for whom to generate the token.
+            ip_address (str, optional): IP from which the token is issued.
+
+        Returns:
+            str: The authentication token.
+        """
+        token_key = TokenManager.generate_token(user)
+        TokenManager.save_token_usage(user, token_key, ip_address)
+        return token_key

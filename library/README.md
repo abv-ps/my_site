@@ -5,7 +5,7 @@ It includes endpoints for:
 
 - Book CRUD operations (Create, Read, Update, Delete)
 - User registration and authentication
-- Token-based authentication (JWT)
+- Token-based authentication (Rest)
 - Book filtering and searching
 - Pagination of book lists
 - Administrative access for book deletion

@@ -11,7 +11,10 @@
 <ul id="messages"></ul>
 
 <script>
-    let chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat');
+    const groupName = "{{ request.user.is_superuser|yesno:'admin,chat' }}";
+    const chatSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/chat/' + groupName + '/'
+    );
 
     chatSocket.onmessage = function (e) {
         let data = JSON.parse(e.data);
