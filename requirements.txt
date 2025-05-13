@@ -33,6 +33,7 @@ inflection==0.5.1
 ipython==9.2.0
 ipython_pygments_lexers==1.1.1
 jedi==0.19.2
+kafka-python==2.2.6
 kombu==5.5.3
 matplotlib-inline==0.1.7
 msgpack==1.1.0
