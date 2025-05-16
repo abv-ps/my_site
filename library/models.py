@@ -86,3 +86,19 @@ class TokenUsage(models.Model):
             str: A string containing the username and hashed token.
         """
         return f"{self.user.username} - {self.token_hash}"
+
+class AuthorBookAction(models.Model):
+    ACTION_CHOICES = [
+        ("author_created", "Author Created"),
+        ("author_updated", "Author Updated"),
+        ("book_created", "Book Created"),
+        ("book_updated", "Book Updated"),
+    ]
+
+    author_id = models.IntegerField(null=True, blank=True)
+    author_name = models.CharField(max_length=255, null=True, blank=True)
+    book_id = models.IntegerField(null=True, blank=True)
+    book_title = models.CharField(max_length=255, null=True, blank=True)
+    action = models.CharField(max_length=50, choices=ACTION_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
