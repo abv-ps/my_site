@@ -1,6 +1,7 @@
 {% extends 'main/base.html' %}
 {% load i18n %}
 
+
 {% block content %}
     <div class="container mt-5">
         <h1 class="text-center">{{ services_title|upper }}</h1>
@@ -17,7 +18,6 @@
         <p>
             <strong>
                 {{ total_services_view }} {{ services|length }} {{ service_view }}
-
             </strong>
         </p>
 
@@ -31,29 +31,37 @@
                         {{ service.description|truncatechars:150|safe }}
                     </p>
 
-                    <!-- Повний текст (прихований за замовчуванням) -->
+                    <!-- Повний текст (прихований за замовчуванням через collapse) -->
                     <div class="collapse" id="full-text-{{ forloop.counter }}">
                         <p>{{ service.description|safe }}</p>
                     </div>
 
                     {% if service.description|length > 150 %}
                         <!-- Кнопка "Розгорнути" -->
-                        <button class="btn btn-link collapsed"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#full-text-{{ forloop.counter }}"
+                        <button class="btn btn-link"
+                                type="button"
+                                data-toggle="collapse"
+                                data-target="#full-text-{{ forloop.counter }}"
                                 aria-expanded="false"
                                 aria-controls="full-text-{{ forloop.counter }}"
-                                onclick="document.getElementById('short-text-{{ forloop.counter }}').classList.add('d-none'); this.classList.add('d-none'); this.nextElementSibling.classList.remove('d-none');">
+                                onclick="document.getElementById('short-text-{{ forloop.counter }}').style.display='none';
+                                        this.style.display='none';
+                                        document.getElementById('collapse-btn-{{ forloop.counter }}').style.display='inline';">
                             {{ show_all_text }}
                         </button>
 
-                        <!-- Кнопка "Згорнути" (спочатку прихована) -->
-                        <button class="btn btn-link d-none"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#full-text-{{ forloop.counter }}"
+                        <!-- Кнопка "Згорнути" -->
+                        <button class="btn btn-link"
+                                id="collapse-btn-{{ forloop.counter }}"
+                                style="display: none;"
+                                type="button"
+                                data-toggle="collapse"
+                                data-target="#full-text-{{ forloop.counter }}"
                                 aria-expanded="true"
                                 aria-controls="full-text-{{ forloop.counter }}"
-                                onclick="document.getElementById('short-text-{{ forloop.counter }}').classList.remove('d-none'); this.classList.add('d-none'); this.previousElementSibling.classList.remove('d-none');">
+                                onclick="document.getElementById('short-text-{{ forloop.counter }}').style.display='block';
+                                        this.style.display='none';
+                                        this.previousElementSibling.style.display='inline';">
                             {{ show_not_all }}
                         </button>
                     {% endif %}
@@ -61,26 +69,26 @@
             {% empty %}
                 <li class="list-group-item text-muted">{{ no_services_view }}</li>
             {% endfor %}
-
         </ul>
 
         {% if services|length < filtered_services|length %}
             <div class="text-center mt-3">
-                <a href="?show_all=true&q={{ request.GET.q }}" class="btn btn-link"
-                   style="color: yellow;">{{ show_all }}</a>
+                <a href="?show_all=true&q={{ request.GET.q }}" class="btn btn-link text-warning">
+                    {{ show_all }}
+                </a>
             </div>
         {% endif %}
 
         {% if show_all and services|length >= filtered_services|length %}
             <div class="text-center mt-3">
-                <a href="?show_all=false&q={{ request.GET.q }}" class="btn btn-link"
-                   style="color: darkblue;">{{ show_not_all }}</a>
+                <a href="?show_all=false&q={{ request.GET.q }}" class="btn btn-link text-primary">
+                    {{ show_not_all }}
+                </a>
             </div>
         {% endif %}
-
-
     </div>
 {% endblock %}
+
 {% block footer_additional_content %}
     <p>{{ contacts_availability_view }} {{ has_contacts|yesno:yes_no_view }}</p>
 {% endblock %}
