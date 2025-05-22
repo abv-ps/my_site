@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.facebook',
+    'bootstrap4',
     'board',
     'main',
     'library',
@@ -79,6 +80,7 @@ REST_FRAMEWORK = {
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -132,7 +134,7 @@ DATABASES = {
         'NAME': getenv("POSTGRES_DB"),
         'USER': getenv("POSTGRES_USER"),
         'PASSWORD': getenv("POSTGRES_PASSWORD"),
-        'HOST': getenv("POSTGRES_HOST"),
+        'HOST': getenv("POSTGRES_HOST"), #'localhost'
         'PORT': getenv("POSTGRES_PORT"),
     }
 }
